@@ -10,7 +10,7 @@ struct status key[4] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
 // 四个按键->四个结构体变量
 // 每个结构体变量的三个参数都被赋值为0
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // 中断回调函数
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // 中断回调函数（此中断每10ms进入一次）
 {
 	if(htim->Instance == TIM3) //判断是否是来自TIM3的中断
 	{
@@ -28,7 +28,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // 中断回调函数
 				case 0: //判断按下
 				{
 					if(key[i].key_status == 0) // 通过if开始时的检测，发现按键可能被按下了（检测到引脚状态由1变0，但还不能确定是扰动还是按键真的被按下）
+					{
 						key[i].step = 1; // 按键状态进行到第一步
+						key[i].key_time = 0; // 发现按键可能被按下后将时间清零
+					}
 				}
 				break;
 				
@@ -36,7 +39,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // 中断回调函数
 				{
 					if(key[i].key_status == 0) // 10ms后再检测引脚电平。如果还是低电平，就说明按键真的被按下了
 					{	key[i].step = 2; // 按键状态进行到第二步
-						key[i].key_flag = 1; // 按键真的被按下了
+						
 					}
 					else key[i].step = 0; // 按键并没有被按下，只是受到了扰动。所以此时将按键状态退回到初始状态（将step赋值为0）。
 				}
@@ -47,6 +50,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // 中断回调函数
 					if(key[i].key_status == 1) // 引脚状态由0变1，说明按键被松开了
 					{
 						key[i].step = 0; // 将按键状态退回到初始状态（将step赋值为0）
+						
+						if (key[i].key_time < 70) // 不松手的时间没超过700ms（0.7s）
+							key[i].key_short_flag = 1; // 将短按标志位置为1
+					}
+					else
+					{
+						key[i].key_time++; // 计算没松手的时间（10ms自增一次）
+						if (key[i].key_time > 70) // 不松手的时间超过700ms（0.7s）
+							key[i].key_long_flag = 1; // 将长按标志位置为1
 					}
 				}
 				break;

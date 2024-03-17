@@ -150,27 +150,27 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	if(key[0].key_flag == 1) // key0真的被按下
+	if(key[0].key_short_flag == 1) // key0被短按
 	{
 	sprintf(text,"        key0");
 	LCD_DisplayStringLine(Line4, (unsigned char *)text);
 		
-	key[0].key_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
+	key[0].key_short_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
 	}
 	
-	if(key[1].key_flag == 1) // key1真的被按下
+	if(key[1].key_short_flag == 1) // key1被短按
 	{
 	sprintf(text,"        key1");
 	LCD_DisplayStringLine(Line4, (unsigned char *)text);
 		
-	key[1].key_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
+	key[1].key_short_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
 	}
 	
-	if(key[3].key_flag == 1) // key3真的被按下
+	if(key[3].key_long_flag == 1) // key3被长按
 	{
 	LED_Init();
 	LCD_Clear(Black);
-	key[3].key_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
+	key[3].key_long_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
 	}
     /* USER CODE BEGIN 3 */
   }
