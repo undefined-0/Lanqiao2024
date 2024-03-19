@@ -32,6 +32,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 extern struct status key[4];
+uint8_t view = 0; // 默认是在第一个界面
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -91,8 +92,9 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  uint8_t i = 0x01;  
-  LED_Display(i);
+  //uint8_t i = 0x01;  
+  //LED_Display(i);
+  LED_Init();
   LCD_Init();
   /* USER CODE END 2 */
 
@@ -141,38 +143,61 @@ int main(void)
     LCD_DisplayStringLine(Line9, (unsigned char *)"                    ");
 	HAL_Delay(1000);*/
 	LCD_Clear(Black);
-	char text[10];
+//	char text[10];
 	LCD_SetBackColor(Black);
     LCD_SetTextColor(White);
 	
-	HAL_TIM_Base_Start_IT(&htim3); // 开启中断
+	HAL_TIM_Base_Start_IT(&htim3); // 开启中断（用来检测按键）
+	
+	char text[10]; // 声明数组用来储存要显示在LCD屏幕上的文字
+	sprintf(text,"       111 first"); // 上电默认显示第一个界面
+    LCD_DisplayStringLine(Line1, (unsigned char *)text);
 	
   while (1)
   {
+	// if(key[0].key_short_flag == 1) // key0被短按
+	// {
+	// sprintf(text,"        key0");
+	// LCD_DisplayStringLine(Line4, (unsigned char *)text);
+		
+	// key[0].key_short_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
+	// }
+	
+	// if(key[1].key_short_flag == 1) // key1被短按
+	// {
+	// sprintf(text,"        key1");
+	// LCD_DisplayStringLine(Line4, (unsigned char *)text);
+		
+	// key[1].key_short_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
+	// }
+	
+	// if(key[3].key_long_flag == 1) // key3被长按
+	// {
+	// LED_Init();
+	// LCD_Clear(Black);
+	// key[3].key_long_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
+	// }
     /* USER CODE END WHILE */
-	if(key[0].key_short_flag == 1) // key0被短按
-	{
-	sprintf(text,"        key0");
-	LCD_DisplayStringLine(Line4, (unsigned char *)text);
-		
-	key[0].key_short_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
-	}
-	
-	if(key[1].key_short_flag == 1) // key1被短按
-	{
-	sprintf(text,"        key1");
-	LCD_DisplayStringLine(Line4, (unsigned char *)text);
-		
-	key[1].key_short_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
-	}
-	
-	if(key[3].key_long_flag == 1) // key3被长按
-	{
-	LED_Init();
-	LCD_Clear(Black);
-	key[3].key_long_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
-	}
+
     /* USER CODE BEGIN 3 */
+	if(key[0].key_short_flag == 1) // key0被短按
+	{	
+      LCD_Clear(Black); // 为避免上一个界面的文字残留，需要先清屏
+      view = !view; // 按键被按下时对view取反
+      key[0].key_short_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
+		
+        if(view == 0) // 若要显示第一个界面
+        {
+          sprintf(text,"       111 first");
+          LCD_DisplayStringLine(Line1, (unsigned char *)text);
+        }
+		
+        if(view == 1) // 若要显示第二个界面
+        {
+          sprintf(text,"       222 second");
+          LCD_DisplayStringLine(Line1, (unsigned char *)text);
+        }
+	}
   }
   /* USER CODE END 3 */
 }
@@ -224,6 +249,10 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
+void disp_proc(void) // 显示过程
+{
+	
+}
 /* USER CODE END 4 */
 
 /**
