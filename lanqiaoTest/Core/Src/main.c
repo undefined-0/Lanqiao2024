@@ -33,6 +33,8 @@
 /* USER CODE BEGIN PTD */
 extern struct status key[4];
 uint8_t view = 0; // 默认是在第一个界面
+uint8_t pa6_duty = 10; // 引脚PA6的PWM波占空比（上电时默认为10%）
+uint8_t pa7_duty = 10; // 引脚PA7的PWM波占空比（上电时默认为10%）
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -91,6 +93,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM3_Init();
+  MX_TIM16_Init();
+  MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
   //uint8_t i = 0x01;  
   //LED_Display(i);
@@ -149,6 +153,9 @@ int main(void)
 	
 	HAL_TIM_Base_Start_IT(&htim3); // 开启中断（用来检测按键）
 	
+	HAL_TIM_PWM_Start(&htim16,TIM_CHANNEL_1); // 打开PWM输出（TIM16，通道1）
+	HAL_TIM_PWM_Start(&htim17,TIM_CHANNEL_1); // 打开PWM输出（TIM17，通道1）
+	
 	char text[10]; // 声明数组用来储存要显示在LCD屏幕上的文字
 	sprintf(text,"       111 first"); // 上电默认显示第一个界面
     LCD_DisplayStringLine(Line1, (unsigned char *)text);
@@ -180,13 +187,32 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	if(key[0].key_short_flag == 1) // key0被短按
+	if(key[0].key_short_flag == 1) // key0被短按时切换界面
 	{	
       LCD_Clear(Black); // 为避免上一个界面的文字残留，需要先清屏
-      view = !view; // 按键被按下时对view取反
+      view = !view; // key0被按下时对view取反
       key[0].key_short_flag = 0; // 将按键标志位清零，表明“已经执行过按下按键时想实现的功能了”
 		
-        if(view == 0) // 若要显示第一个界面
+	}
+	if(key[1].key_short_flag == 1) // key1被短按
+    {
+         pa6_duty += 10;
+           if(pa6_duty == 100)
+             pa6_duty = 10;
+         __HAL_TIM_SetCompare(&htim16,TIM_CHANNEL_1,pa6_duty); // HAL库函数，设置占空比
+         key[1].key_short_flag = 0;
+    }
+	
+    if(key[2].key_short_flag == 1) // key2被短按
+    {
+         pa7_duty += 10;
+           if(pa7_duty == 100)
+             pa7_duty = 10;
+         __HAL_TIM_SetCompare(&htim17,TIM_CHANNEL_1,pa7_duty); // HAL库函数，设置占空比
+         key[2].key_short_flag = 0;
+	}
+	
+	    if(view == 0) // 若要显示第一个界面
         {
           sprintf(text,"       111 first");
           LCD_DisplayStringLine(Line1, (unsigned char *)text);
@@ -194,12 +220,15 @@ int main(void)
 		
         if(view == 1) // 若要显示第二个界面
         {
-          sprintf(text,"       222 second");
-          LCD_DisplayStringLine(Line1, (unsigned char *)text);
+			sprintf(text,"    PA6:%d",pa6_duty);
+          LCD_DisplayStringLine(Line2, (unsigned char *)text);
+			sprintf(text,"    PA7:%d",pa7_duty);
+          LCD_DisplayStringLine(Line4, (unsigned char *)text);
         }
-	}
-  }
+
+
   /* USER CODE END 3 */
+}
 }
 
 /**
@@ -249,10 +278,6 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-void disp_proc(void) // 显示过程
-{
-	
-}
 /* USER CODE END 4 */
 
 /**
