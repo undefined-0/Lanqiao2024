@@ -1,4 +1,5 @@
 #include "interrupt.h"
+#include "usart.h"
 
 /* 
 根据原理图，
@@ -88,6 +89,14 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) // 中断回调函数
 	}
 }
 
+char rxdata[30]; // 用来储存已经处理好的数据
+uint8_t rxdat; // 每次接收时用来存储字符的变量
+uint8_t rx_pointer; // “指针”，确定我们写到哪个位置（因为是一位一位接收的）
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) // 串口接收的回调函数
+{
+	rxdata[rx_pointer++] = rxdat; // 每次只能接收一位，每进入一次中断就会把上一次的先存到数组里，一位一位拼起来就得到了处理好的数据
+	HAL_UART_Receive_IT(&huart1,&rxdat,1); // 位数必须填成1，因为每次中断只能接收一个字符
+}
 
 
 

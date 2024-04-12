@@ -20,11 +20,13 @@
 #include "main.h"
 #include "adc.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+#include "string.h"
 #include "led.h"
 #include "lcd.h"
 #include "interrupt.h"
@@ -39,6 +41,15 @@ uint8_t view = 0; // 默认是在第一个界面
 uint8_t pa6_duty = 10; // 引脚PA6的PWM波占空比（上电时默认为10%）
 uint8_t pa7_duty = 10; // 引脚PA7的PWM波占空比（上电时默认为10%）
 extern uint16_t frq_1,frq_2;
+extern char rxdata[30]; // 用来储存已经处理好的数据
+extern uint8_t rxdat; // 每次接收时用来存储字符的变量
+extern uint8_t rx_pointer; // “指针”，确定我们写到哪个位置（因为是一位一位接收的）
+void uart_rx_proc(void); // 串口接收处理函数
+char temp[20]; // 用来串口发送的数组
+
+char car_type[5];
+char car_data[5];
+char car_time[13];
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -103,6 +114,7 @@ int main(void)
   MX_TIM4_Init();
   MX_ADC1_Init();
   MX_ADC2_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   //uint8_t i = 0x01;  
   //LED_Display(i);
@@ -163,8 +175,11 @@ int main(void)
 	
 	HAL_TIM_PWM_Start(&htim16,TIM_CHANNEL_1); // 打开PWM输出（TIM16，通道1）
 	HAL_TIM_PWM_Start(&htim17,TIM_CHANNEL_1); // 打开PWM输出（TIM17，通道1）
+	
 	HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_1); // 频率测量捕获定时器开启
 	HAL_TIM_IC_Start_IT(&htim3,TIM_CHANNEL_1); // 频率测量捕获定时器开启
+	
+	HAL_UART_Receive_IT(&huart1,&rxdat,1); // 串口接收中断打开
 	
 	char text[10]; // 声明数组用来储存要显示在LCD屏幕上的文字
 	sprintf(text,"       111 first"); // 上电默认显示第一个界面
@@ -255,13 +270,26 @@ int main(void)
 		 if(key[3].key_short_flag == 1) // key3被短按
 		{
          uint8_t frq_high = frq_1>>8; // 频率是无符号16位，而eeprom芯片一个位只能存一个八位的数，所以要拆成高八位和低八位
-		 uint8_t frq_low = frq_1&0xff;
+		 uint8_t frq_low = frq_1&0xff; // 与0000 0000 1111 1111相与，取出低八位
 			
 			eeprom_write(1,frq_high);// 将两个数分别存入eeprom的两个区域里
 			HAL_Delay(10); // 写入是需要时间的。如果不加延迟，很可能会写不进去
 			eeprom_write(2,frq_low);
+			
          key[3].key_short_flag = 0;
 		}
+		
+		sprintf(temp,"frq = %d\r\n",frq_1);
+		HAL_UART_Transmit(&huart1,(uint8_t *)temp,strlen(temp),50); // 串口发送数据
+		
+		if(rx_pointer!=0) // 串口接收数据（防止接收不完整问题）
+		{
+			int temp = rx_pointer;
+			HAL_Delay(1);
+			if(temp == rx_pointer)
+				uart_rx_proc(); // 串口接收处理函数
+		}
+		
 	}	
 
 
@@ -314,7 +342,23 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+		void uart_rx_proc() // 串口接收处理函数
+	{
+		 if(rx_pointer>0) // “指针”不在0的位置，说明接收到了
+		 {
+			 if(rx_pointer == 22) // 第十二届真题中发送的数据都是22位，由此即可判断是否接收成功
+			 {
+				 sscanf(rxdata,"%4s:%4s:%12s",car_type,car_data,car_time); // 把接收到的字符串拆开
+			 }
+			 else // 不是22位，说明接收错误
+			 {
+				 sprintf(temp,"error");
+		HAL_UART_Transmit(&huart1,(uint8_t *)temp,strlen(temp),50); // 串口发送数据
+			 }
+			 rx_pointer = 0; // 接收完了，指针归位，准备接收下一次数据
+			 memset(rxdata,0,30);
+		 }
+	}
 /* USER CODE END 4 */
 
 /**
