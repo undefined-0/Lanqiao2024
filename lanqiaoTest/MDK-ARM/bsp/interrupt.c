@@ -66,3 +66,42 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // ÖĞ¶Ï»Øµ÷º¯Êı£¨´ËÖ
 		} // ÂÖÑ¯½áÊø£¬ÖØĞÂ¶ÁÈ¡ËÄ¸ö°´¼üµÄÒı½Å×´Ì¬
 	}
 } // ÅĞ¶Ï°´¼üµÄÖĞ¶Ï»Øµ÷º¯Êı½áÊø
+
+uint16_t ccrl_val_1,ccrl_val_2 = 0;
+uint16_t frq_1,frq_2 = 0;
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) // ÖĞ¶Ï»Øµ÷º¯Êı
+{
+	if(htim->Instance == TIM2) //ÅĞ¶ÏÊÇ·ñÊÇÀ´×ÔTIM2µÄÖĞ¶Ï
+	{
+		ccrl_val_1 = HAL_TIM_ReadCapturedValue(htim,TIM_CHANNEL_1); // °Ñ¶¨Ê±Æ÷µÄ¼ÆÊ±Öµ´æµ½Ò»¸ö±äÁ¿Àï
+		__HAL_TIM_SetCounter(htim,0); // ¼ÆÊ±Öµ¶Áµ½Ö®ºó¾Í¿ÉÒÔÇåÁãÁË
+		frq_1 = (80000000/80)/ccrl_val_1; // ¼ÆËãÆµÂÊ£¬ÓÃ80MHz³ıÒÔ·ÖÆµÏµÊı80£¬ÔÙ³ıÒÔ¸Õ¸ÕµÃµ½µÄ¼ÆÊ±Öµ
+		HAL_TIM_IC_Start(htim,TIM_CHANNEL_1);
+	}
+	
+	if(htim->Instance == TIM3) //ÅĞ¶ÏÊÇ·ñÊÇÀ´×ÔTIM3µÄÖĞ¶Ï
+	{
+		ccrl_val_2 = HAL_TIM_ReadCapturedValue(htim,TIM_CHANNEL_1); // °Ñ¶¨Ê±Æ÷µÄ¼ÆÊ±Öµ´æµ½Ò»¸ö±äÁ¿Àï
+		__HAL_TIM_SetCounter(htim,0); // ¼ÆÊ±Öµ¶Áµ½Ö®ºó¾Í¿ÉÒÔÇåÁãÁË
+		frq_2 = (80000000/80)/ccrl_val_2; // ¼ÆËãÆµÂÊ£¬ÓÃ80MHz³ıÒÔ·ÖÆµÏµÊı80£¬ÔÙ³ıÒÔ¸Õ¸ÕµÃµ½µÄ¼ÆÊ±Öµ
+		HAL_TIM_IC_Start(htim,TIM_CHANNEL_1);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

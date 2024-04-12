@@ -14,5 +14,6 @@ struct status // 名为status的结构体
 };
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim); // 中断回调函数
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim); // 中断回调函数
 
 #endif /*__INTERRUPT_H__*/

@@ -35,6 +35,7 @@ extern struct status key[4];
 uint8_t view = 0; // 默认是在第一个界面
 uint8_t pa6_duty = 10; // 引脚PA6的PWM波占空比（上电时默认为10%）
 uint8_t pa7_duty = 10; // 引脚PA7的PWM波占空比（上电时默认为10%）
+extern uint16_t frq_1,frq_2;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -156,6 +157,8 @@ int main(void)
 	
 	HAL_TIM_PWM_Start(&htim16,TIM_CHANNEL_1); // 打开PWM输出（TIM16，通道1）
 	HAL_TIM_PWM_Start(&htim17,TIM_CHANNEL_1); // 打开PWM输出（TIM17，通道1）
+	HAL_TIM_IC_Start_IT(&htim2,TIM_CHANNEL_1); // 频率测量捕获定时器开启
+	HAL_TIM_IC_Start_IT(&htim3,TIM_CHANNEL_1); // 频率测量捕获定时器开启
 	
 	char text[10]; // 声明数组用来储存要显示在LCD屏幕上的文字
 	sprintf(text,"       111 first"); // 上电默认显示第一个界面
@@ -215,8 +218,15 @@ int main(void)
 	
 	    if(view == 0) // 若要显示第一个界面
         {
+			//LCD_Clear(Black);
           sprintf(text,"       111 first");
           LCD_DisplayStringLine(Line1, (unsigned char *)text);
+			//LCD_Clear(Black);
+		  sprintf(text,"       FRQ1=%d",frq_1);
+          LCD_DisplayStringLine(Line2, (unsigned char *)text);
+			//LCD_Clear(Black);
+		  sprintf(text,"       FRQ2=%d",frq_2);
+          LCD_DisplayStringLine(Line4, (unsigned char *)text);
         }
 		
         if(view == 1) // 若要显示第二个界面
