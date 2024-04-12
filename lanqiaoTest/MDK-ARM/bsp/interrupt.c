@@ -12,7 +12,7 @@ struct status key[4] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // 中断回调函数（此中断每10ms进入一次）
 {
-	if(htim->Instance == TIM3) //判断是否是来自TIM3的中断
+	if(htim->Instance == TIM4) //判断是否是来自TIM4的中断
 	{
 		// 读取四个按键的状态（引脚电平）
 		key[0].key_status = HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0); // PB0

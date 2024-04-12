@@ -97,6 +97,7 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM17_Init();
   MX_TIM2_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
   //uint8_t i = 0x01;  
   //LED_Display(i);
@@ -153,7 +154,7 @@ int main(void)
 	LCD_SetBackColor(Black);
     LCD_SetTextColor(White);
 	
-	HAL_TIM_Base_Start_IT(&htim3); // 开启中断（用来检测按键）
+	HAL_TIM_Base_Start_IT(&htim4); // 开启中断（用来检测按键）
 	
 	HAL_TIM_PWM_Start(&htim16,TIM_CHANNEL_1); // 打开PWM输出（TIM16，通道1）
 	HAL_TIM_PWM_Start(&htim17,TIM_CHANNEL_1); // 打开PWM输出（TIM17，通道1）
