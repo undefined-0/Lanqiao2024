@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "tim.h"
 #include "gpio.h"
 
@@ -27,6 +28,7 @@
 #include "led.h"
 #include "lcd.h"
 #include "interrupt.h"
+#include "my_adc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -98,6 +100,8 @@ int main(void)
   MX_TIM17_Init();
   MX_TIM2_Init();
   MX_TIM4_Init();
+  MX_ADC1_Init();
+  MX_ADC2_Init();
   /* USER CODE BEGIN 2 */
   //uint8_t i = 0x01;  
   //LED_Display(i);
@@ -228,6 +232,10 @@ int main(void)
 			//LCD_Clear(Black);
 		  sprintf(text,"       FRQ2=%d",frq_2);
           LCD_DisplayStringLine(Line4, (unsigned char *)text);
+			sprintf(text,"       ADC1=%.2f",getADC(&hadc1));
+          LCD_DisplayStringLine(Line6, (unsigned char *)text);
+			sprintf(text,"       ADC2=%.2f",getADC(&hadc2));
+          LCD_DisplayStringLine(Line8, (unsigned char *)text);
         }
 		
         if(view == 1) // 若要显示第二个界面

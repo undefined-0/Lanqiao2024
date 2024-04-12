@@ -67,8 +67,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // ÖÐ¶Ï»Øµ÷º¯Êý£¨´ËÖ
 	}
 } // ÅÐ¶Ï°´¼üµÄÖÐ¶Ï»Øµ÷º¯Êý½áÊø
 
-uint16_t ccrl_val_1,ccrl_val_2 = 0;
-uint16_t frq_1,frq_2 = 0;
+uint16_t ccrl_val_1,ccrl_val_2 = 0; // ×¢Òâ£¬ÕâÀïÒªÊ¹ÓÃuint16_t¶ø·Çuint8_t£¬·ñÔò»á²úÉúÒç³ö
+uint16_t frq_1,frq_2 = 0; // ×¢Òâ£¬ÕâÀïÒªÊ¹ÓÃuint16_t¶ø·Çuint8_t£¬·ñÔò»á²úÉúÒç³ö
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) // ÖÐ¶Ï»Øµ÷º¯Êý
 {
 	if(htim->Instance == TIM2) //ÅÐ¶ÏÊÇ·ñÊÇÀ´×ÔTIM2µÄÖÐ¶Ï
