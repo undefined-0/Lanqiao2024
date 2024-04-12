@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G431xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/CMSIS/Include;./bsp</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/CMSIS/Include;..\bsp</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -790,24 +790,29 @@
           <GroupName>bsp</GroupName>
           <Files>
             <File>
-              <FileName>led.c</FileName>
+              <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\bsp\led.c</FilePath>
+              <FilePath>..\bsp\interrupt.c</FilePath>
             </File>
             <File>
               <FileName>lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\bsp\lcd.c</FilePath>
+              <FilePath>..\bsp\lcd.c</FilePath>
             </File>
             <File>
-              <FileName>interrupt.c</FileName>
+              <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\bsp\interrupt.c</FilePath>
+              <FilePath>..\bsp\led.c</FilePath>
             </File>
             <File>
               <FileName>my_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\bsp\my_adc.c</FilePath>
+              <FilePath>..\bsp\my_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_hal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\bsp\i2c_hal.c</FilePath>
             </File>
           </Files>
         </Group>

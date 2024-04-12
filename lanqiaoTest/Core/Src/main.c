@@ -29,6 +29,7 @@
 #include "lcd.h"
 #include "interrupt.h"
 #include "my_adc.h"
+#include "i2c_hal.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -232,10 +233,16 @@ int main(void)
 			//LCD_Clear(Black);
 		  sprintf(text,"       FRQ2=%d",frq_2);
           LCD_DisplayStringLine(Line4, (unsigned char *)text);
-			sprintf(text,"       ADC1=%.2f",getADC(&hadc1));
+			
+//			sprintf(text,"       ADC1=%.2f",getADC(&hadc1));
+//          LCD_DisplayStringLine(Line6, (unsigned char *)text);
+//			sprintf(text,"       ADC2=%.2f",getADC(&hadc2));
+//          LCD_DisplayStringLine(Line8, (unsigned char *)text);
+			
+			uint16_t eep_temp = (eeprom_read(1)<<8) + eeprom_read(2); // 读取eeprom的数据，高八位左移8位+低八位
+			sprintf(text,"  eeprom__frq=%d",eep_temp);
           LCD_DisplayStringLine(Line6, (unsigned char *)text);
-			sprintf(text,"       ADC2=%.2f",getADC(&hadc2));
-          LCD_DisplayStringLine(Line8, (unsigned char *)text);
+
         }
 		
         if(view == 1) // 若要显示第二个界面
@@ -245,6 +252,16 @@ int main(void)
 			sprintf(text,"    PA7:%d",pa7_duty);
           LCD_DisplayStringLine(Line4, (unsigned char *)text);
         }
+		 if(key[3].key_short_flag == 1) // key3被短按
+		{
+         uint8_t frq_high = frq_1>>8; // 频率是无符号16位，而eeprom芯片一个位只能存一个八位的数，所以要拆成高八位和低八位
+		 uint8_t frq_low = frq_1&0xff;
+			
+			eeprom_write(1,frq_high);// 将两个数分别存入eeprom的两个区域里
+			HAL_Delay(10); // 写入是需要时间的。如果不加延迟，很可能会写不进去
+			eeprom_write(2,frq_low);
+         key[3].key_short_flag = 0;
+		}
 	}	
 
 
