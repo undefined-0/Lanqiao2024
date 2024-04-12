@@ -38,8 +38,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // ÖĞ¶Ï»Øµ÷º¯Êı£¨´ËÖ
 				case 1: // Ïû¶¶¹ı³Ì
 				{
 					if(key[i].key_status == 0) // 10msºóÔÙ¼ì²âÒı½ÅµçÆ½¡£Èç¹û»¹ÊÇµÍµçÆ½£¬¾ÍËµÃ÷°´¼üÕæµÄ±»°´ÏÂÁË
-					{	key[i].step = 2; // °´¼ü×´Ì¬½øĞĞµ½µÚ¶ş²½
-						
+					{	
+						key[i].step = 2; // °´¼ü×´Ì¬½øĞĞµ½µÚ¶ş²½
 					}
 					else key[i].step = 0; // °´¼ü²¢Ã»ÓĞ±»°´ÏÂ£¬Ö»ÊÇÊÜµ½ÁËÈÅ¶¯¡£ËùÒÔ´ËÊ±½«°´¼ü×´Ì¬ÍË»Øµ½³õÊ¼×´Ì¬£¨½«step¸³ÖµÎª0£©¡£
 				}
@@ -54,7 +54,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // ÖĞ¶Ï»Øµ÷º¯Êı£¨´ËÖ
 						if (key[i].key_time < 70) // ²»ËÉÊÖµÄÊ±¼äÃ»³¬¹ı700ms£¨0.7s£©
 							key[i].key_short_flag = 1; // ½«¶Ì°´±êÖ¾Î»ÖÃÎª1
 					}
-					else
+					else // Òı½Å×´Ì¬Ã»±ä£¬ËµÃ÷°´¼ü»¹ÔÚ±»°´×Å
 					{
 						key[i].key_time++; // ¼ÆËãÃ»ËÉÊÖµÄÊ±¼ä£¨10ms×ÔÔöÒ»´Î£©
 						if (key[i].key_time > 70) // ²»ËÉÊÖµÄÊ±¼ä³¬¹ı700ms£¨0.7s£©

@@ -95,6 +95,7 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM16_Init();
   MX_TIM17_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   //uint8_t i = 0x01;  
   //LED_Display(i);
@@ -225,10 +226,10 @@ int main(void)
 			sprintf(text,"    PA7:%d",pa7_duty);
           LCD_DisplayStringLine(Line4, (unsigned char *)text);
         }
+	}	
 
 
   /* USER CODE END 3 */
-}
 }
 
 /**
